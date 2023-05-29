@@ -95,6 +95,7 @@ app.get('/overall-breakdown', async (req, res) => {
     const data = []
     const values = []
     const counts = []
+    const percentages = []
 
     try {
         const db = await connectDatabase();
@@ -113,14 +114,25 @@ app.get('/overall-breakdown', async (req, res) => {
         ];
 
         const cursor = tournaments.aggregate(pipeline);
+        let percentageValue = 0
 
         await cursor.forEach(result => {
             values.push(result._id)
             counts.push(result.count)
         });
 
+        counts.forEach(count => {
+            percentageValue += count
+        })
+
+        counts.forEach(count => {
+            let percentage = (count * 100) / percentageValue
+            percentages.push(percentage)
+        })
+
         data.push(values)
         data.push(counts)
+        data.push(percentages)
 
 
         res.status(200).json(data);
