@@ -74,6 +74,7 @@ app.get('/winner-breakdown', async (req, res) => {
 
         counts.forEach(count => {
             let percentage = (count * 100) / percentageValue
+            percentage = percentage.toFixed(2);
             percentages.push(percentage)
         })
 
@@ -127,6 +128,7 @@ app.get('/overall-breakdown', async (req, res) => {
 
         counts.forEach(count => {
             let percentage = (count * 100) / percentageValue
+            percentage = percentage.toFixed(2);
             percentages.push(percentage)
         })
 
