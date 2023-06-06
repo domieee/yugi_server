@@ -31,14 +31,15 @@ app.post('/tournament-overview', async (req, res) => {
 })
 
 app.get('/winner-breakdown', async (req, res) => {
+
     const data = []
     const values = []
     const counts = []
     const percentages = []
 
     try {
-        const db = await connectDatabase();
-        const tournaments = db.collection('tournaments');
+        const db = await connectDatabase()
+        const tournaments = db.collection('tournaments')
 
         const pipeline = [
             {
@@ -55,18 +56,15 @@ app.get('/winner-breakdown', async (req, res) => {
                     count: { $sum: 1 }
                 }
             }
-        ];
+        ]
 
-        const cursor = tournaments.aggregate(pipeline);
+        const cursor = tournaments.aggregate(pipeline)
         let percentageValue = 0
 
-
-        console.log(percentageValue)
-
         await cursor.forEach(result => {
-            values.push(result._id);
-            counts.push(result.count);
-        });
+            values.push(result._id)
+            counts.push(result.count)
+        })
 
         counts.forEach(count => {
             percentageValue += count
@@ -74,7 +72,7 @@ app.get('/winner-breakdown', async (req, res) => {
 
         counts.forEach(count => {
             let percentage = (count * 100) / percentageValue
-            percentage = percentage.toFixed(2);
+            percentage = percentage.toFixed(2)
             percentages.push(percentage)
         })
 
@@ -82,25 +80,24 @@ app.get('/winner-breakdown', async (req, res) => {
         data.push(counts)
         data.push(percentages)
 
-        console.log(data)
-
-
         res.status(200).json(data)
     } catch (error) {
         console.error("Error retrieving winner breakdown:", error)
-        res.status(500).json({ error: "An error occurred while retrieving the winner breakdown" });
+        res.status(500).json({ error: "An error occurred while retrieving the winner breakdown" })
     }
-});
+})
 
 app.get('/overall-breakdown', async (req, res) => {
+
     const data = []
     const values = []
     const counts = []
     const percentages = []
 
     try {
-        const db = await connectDatabase();
-        const tournaments = db.collection('tournaments');
+
+        const db = await connectDatabase()
+        const tournaments = db.collection('tournaments')
 
         const pipeline = [
             {
@@ -112,15 +109,15 @@ app.get('/overall-breakdown', async (req, res) => {
                     count: { $sum: 1 }
                 }
             }
-        ];
+        ]
 
-        const cursor = tournaments.aggregate(pipeline);
+        const cursor = tournaments.aggregate(pipeline)
         let percentageValue = 0
 
         await cursor.forEach(result => {
             values.push(result._id)
             counts.push(result.count)
-        });
+        })
 
         counts.forEach(count => {
             percentageValue += count
@@ -128,7 +125,7 @@ app.get('/overall-breakdown', async (req, res) => {
 
         counts.forEach(count => {
             let percentage = (count * 100) / percentageValue
-            percentage = percentage.toFixed(2);
+            percentage = percentage.toFixed(2)
             percentages.push(percentage)
         })
 
@@ -137,12 +134,12 @@ app.get('/overall-breakdown', async (req, res) => {
         data.push(percentages)
 
 
-        res.status(200).json(data);
+        res.status(200).json(data)
     } catch (error) {
-        console.error("Error retrieving deck count:", error);
-        res.status(500).json({ error: "An error occurred while retrieving the deck count" });
+        console.error("Error retrieving deck count:", error)
+        res.status(500).json({ error: "An error occurred while retrieving the deck count" })
     }
-});
+})
 
 try {
     app.listen(PORT, () => console.log(`Server listening on ${PORT} 👍`))
