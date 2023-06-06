@@ -22,13 +22,19 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/tournament-overview', async (req, res) => {
-    console.log(req.body.id)
-    const reqID = new ObjectId(req.body.id)
-    const db = await connectDatabase()
-    const json = await db.collection('tournaments').findOne({ _id: reqID })
-    console.log(json)
-    res.json(json)
-})
+    console.log(req.body.id); // Check the value of req.body.id
+    try {
+        const reqID = new ObjectId(req.body.id);
+        console.log(reqID); // Check the ObjectId instance
+        const db = await connectDatabase();
+        const json = await db.collection('tournaments').findOne({ _id: reqID });
+        console.log(json); // Check the retrieved data
+        res.json(json);
+    } catch (error) {
+        console.log(error); // Log any errors that occur
+        res.status(500).json({ error: 'An error occurred' });
+    }
+});
 
 app.get('/winner-breakdown', async (req, res) => {
 
