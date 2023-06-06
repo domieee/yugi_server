@@ -24,7 +24,7 @@ app.get('/', async (req, res) => {
 app.post('/tournament-overview', async (req, res) => {
     console.log(req.body.id); // Check the value of req.body.id
     try {
-        const reqID = new ObjectId(req.body.id);
+        const reqID = new ObjectId(req.body.id[0]);
         console.log(reqID); // Check the ObjectId instance
         const db = await connectDatabase();
         const json = await db.collection('tournaments').findOne({ _id: reqID });
