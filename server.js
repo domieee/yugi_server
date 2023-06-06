@@ -27,7 +27,7 @@ app.post('/tournament-overview', async (req, res) => {
     const db = await connectDatabase()
     const json = await db.collection('tournaments').findOne({ _id: reqID })
     console.log(json)
-    res.send(json)
+    res.json(json)
 })
 
 app.get('/winner-breakdown', async (req, res) => {
