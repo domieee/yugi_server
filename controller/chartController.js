@@ -16,7 +16,7 @@ export const getTournamentBreakdown = async (req, res, next) => {
                 count: { $sum: 1 }
             }
         }
-    ];
+    ]
 
     const cursor = tournaments.aggregate(pipeline)
     let percentageValue = 0
@@ -24,17 +24,17 @@ export const getTournamentBreakdown = async (req, res, next) => {
     await cursor.forEach(result => {
         values.push(result._id)
         counts.push(result.count)
-    });
+    })
 
     counts.forEach(count => {
         percentageValue += count
-    });
+    })
 
     counts.forEach(count => {
         let percentage = (count * 100) / percentageValue;
         percentage = percentage.toFixed(2)
         percentages.push(percentage)
-    });
+    })
 
     data.push(values)
     data.push(counts)
