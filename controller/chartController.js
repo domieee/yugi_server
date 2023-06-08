@@ -1,4 +1,4 @@
-import { connectDatabase } from "../util/db"
+import { connectDatabase } from "../util/db.js"
 
 export const getTournamentBreakdown = async (req, res, next) => {
     const tournamentId = req.body.id
