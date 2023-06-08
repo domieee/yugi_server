@@ -4,6 +4,12 @@ import { ObjectId } from 'mongodb'
 
 export const getTournamentBreakdown = async (req, res, next) => {
     const tournamentId = new ObjectId(req.body.id[0])
+
+    const data = []
+    const values = []
+    const counts = []
+    const percentages = []
+
     try {
 
         const db = await connectDatabase()
