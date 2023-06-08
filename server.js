@@ -5,6 +5,8 @@ import { ObjectId } from 'mongodb'
 
 import { connectDatabase } from './util/db.js'
 
+import { getTournamentBreakdown } from './controller/chartController.js'
+
 const app = express()
 
 
@@ -139,13 +141,14 @@ app.get('/overall-breakdown', async (req, res) => {
         data.push(counts)
         data.push(percentages)
 
-
         res.status(200).json(data)
     } catch (error) {
         console.error("Error retrieving deck count:", error)
         res.status(500).json({ error: "An error occurred while retrieving the deck count" })
     }
 })
+
+app.post('/tournament-breakdown', getTournamentBreakdown)
 
 try {
     app.listen(PORT, () => console.log(`Server listening on ${PORT} 👍`))
