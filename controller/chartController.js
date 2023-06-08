@@ -1,7 +1,7 @@
 import { connectDatabase } from "../util/db.js"
 
 export const getTournamentBreakdown = async (req, res, next) => {
-    const tournamentId = req.body.id
+    const tournamentId = req.body.id[0]
     try {
 
         const db = await connectDatabase()
