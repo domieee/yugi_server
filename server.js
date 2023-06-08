@@ -9,13 +9,17 @@ import { getTournamentBreakdown } from './controller/chartController.js'
 
 const app = express()
 
-
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
 app.use(cors())
 app.use(express.json())
 
 app.get('/', async (req, res) => {
+
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow requests from any domain (*)
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+
     const db = await connectDatabase()
     const json = await db.collection('tournaments').find({}).toArray()
     console.log(json)
@@ -23,16 +27,16 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/tournament-overview', async (req, res) => {
-    console.log(req.body.id); // Check the value of req.body.id
+    console.log(req.body.id)
     try {
         const reqID = new ObjectId(req.body.id[0]);
-        console.log(reqID); // Check the ObjectId instance
+        console.log(reqID)
         const db = await connectDatabase();
         const json = await db.collection('tournaments').findOne({ _id: reqID });
-        console.log(json); // Check the retrieved data
+        console.log(json)
         res.json(json);
     } catch (error) {
-        console.log(error); // Log any errors that occur
+        console.log(error)
         res.status(500).json({ error: 'An error occurred' });
     }
 });
