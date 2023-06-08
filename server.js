@@ -11,7 +11,7 @@ const app = express()
 
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
-app.use(cors())
+app.use(cors({ origin: '*' }))
 app.use(express.json())
 
 app.get('/', async (req, res) => {
