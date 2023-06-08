@@ -1,7 +1,9 @@
 import { connectDatabase } from "../util/db.js"
 
+import { ObjectId } from 'mongodb'
+
 export const getTournamentBreakdown = async (req, res, next) => {
-    const tournamentId = req.body.id[0]
+    const tournamentId = new ObjectId(req.body.id[0])
     try {
 
         const db = await connectDatabase()
@@ -10,7 +12,7 @@ export const getTournamentBreakdown = async (req, res, next) => {
         const pipeline = [
             {
                 $match: {
-                    _id: ObjectId(tournamentId)
+                    _id: tournamentId
                 }
             },
             {
