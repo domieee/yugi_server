@@ -1,7 +1,8 @@
+import { connectDatabase } from "../util/db"
+
 export const getTournamentBreakdown = async (req, res, next) => {
     const tournamentId = req.body.id
     try {
-
 
         const db = await connectDatabase()
         const tournaments = db.collection('tournaments')
