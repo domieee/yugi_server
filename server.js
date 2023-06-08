@@ -15,14 +15,6 @@ const PORT = process.env.PORT || process.env.FALLBACK_PORT
 app.use(cors())
 app.use(express.json())
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow requests from any domain (*)
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
-
-
 app.get('/', async (req, res) => {
     const db = await connectDatabase()
     const json = await db.collection('tournaments').find({}).toArray()
