@@ -14,16 +14,12 @@ import {
 const app = express()
 
 
-app.use(cors({ origin: '*' }))
+
 app.use(express.json())
+app.use(cors({ origin: '*' }))
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
-
-
 app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
-
-
-
 
 app.get('/', async (req, res) => {
     const db = await connectDatabase()
