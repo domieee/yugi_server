@@ -24,6 +24,7 @@ export async function validateRegisterInput(req, res, next) {
         res.end()
     } catch (err) {
         res.status(400).json(err)
+        return
         if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'email') {
             res.status(400).json({ msg: 'Email is required', key: 'email' })
             return
