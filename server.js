@@ -19,10 +19,7 @@ const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
 app.use(cookieParser())
 app.use(express.json())
-app.use(cors({
-    origin: true,
-    credentials: true
-}))
+app.use(cors())
 app.get('/', async (req, res) => {
 
     const db = await connectDatabase()
