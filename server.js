@@ -7,6 +7,10 @@ import { connectDatabase } from './util/db.js'
 
 import { getTournamentBreakdown } from './controller/chartController.js'
 
+import {
+    validateRegisterInput
+} from './middlewares/joiAuthMiddleware.js'
+
 const app = express()
 
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
@@ -21,6 +25,8 @@ app.get('/', async (req, res) => {
     console.log(json)
     res.json(json)
 })
+
+app.post('/register', validateRegisterInput)
 
 app.post('/tournament-overview', async (req, res) => {
     console.log(req.body.id)
