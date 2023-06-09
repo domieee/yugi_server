@@ -23,6 +23,8 @@ const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
 app.use(express.json())
 
+app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
+
 
 
 
