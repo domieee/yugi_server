@@ -14,15 +14,13 @@ import {
 const app = express()
 
 const corsOptions = {
-    origin: http://localhost:3000,
+    origin: 'http://localhost:3000',
     credentials: true
 };
 
 app.use(cors(corsOptions))
 
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
-
-
 
 app.use(cookieParser())
 app.use(express.json())
