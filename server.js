@@ -15,7 +15,12 @@ const app = express()
 
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
-app.use(cors({ origin: '*' }))
+
+app.use(cors({
+    origin: true,
+    credentials: true
+}))
+app.use(cookieParser())
 app.use(express.json())
 
 app.get('/', async (req, res) => {
