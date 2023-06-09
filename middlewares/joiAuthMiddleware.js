@@ -2,9 +2,6 @@ import Joi from 'joi'
 
 export async function validateRegisterInput(req, res, next) {
 
-    res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-
     const schema = Joi.object({
         username: Joi.string()
             .required()
