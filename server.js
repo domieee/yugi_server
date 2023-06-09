@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import mongoose from 'mongoose'
 import './util/dotenv.js'
 import { ObjectId } from 'mongodb'
 
@@ -8,8 +9,16 @@ import { connectDatabase } from './util/db.js'
 import { getTournamentBreakdown } from './controller/chartController.js'
 
 import {
+    encrypt
+} from './middlewares/claimAuthMiddleware.js'
+
+import {
     validateRegisterInput
 } from './middlewares/joiAuthMiddleware.js'
+
+import {
+    completeRegistration
+} from './controller/registrationController.js'
 
 const app = express()
 
@@ -28,7 +37,7 @@ app.get('/', async (req, res) => {
     res.json(json)
 })
 
-app.post('/register', validateRegisterInput)
+app.post('/register', validateRegisterInput, encrypt, completeRegistration)
 
 app.post('/tournament-overview', async (req, res) => {
     console.log(req.body.id)
@@ -161,4 +170,11 @@ try {
     app.listen(PORT, () => console.log(`Server listening on ${PORT} 👍`))
 } catch (err) {
     console.log(`Server not able to run on ${PORT} 👎, Error: ${err}`)
+}
+
+try {
+    mongoose.connect(`${process.env.MONGO_URI}data`)
+    console.log(`Database connected successfully 👍`)
+} catch (err) {
+    console.log(`Not able to connect Database 👎, Error: ${err}`)
 }
