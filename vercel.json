@@ -8,6 +8,10 @@
   ],
   "routes": [
     {
+      "src": "/register",
+      "dest": "server.js"
+    },
+    {
       "src": "/tournament-overview",
       "dest": "server.js"
     },
