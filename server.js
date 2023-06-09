@@ -13,11 +13,7 @@ import {
 
 const app = express()
 
-const corsOptions = {
-    origin: '*',
-};
-
-app.use(cors(corsOptions))
+app.use(cors({ origin: true }))
 
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
