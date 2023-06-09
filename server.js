@@ -19,17 +19,16 @@ const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
 app.use(cookieParser())
 app.use(express.json())
-app.use(cors(
-    {
-        origin: process.env.FRONTEND_URL,
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['Content-Type']
-    }
-))
+
+const corsOptions = {
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+};
+
+app.use(cors(corsOptions))
 
 
 app.get('/', async (req, res) => {
-
     const db = await connectDatabase()
     const json = await db.collection('tournaments').find({}).toArray()
     console.log(json)
