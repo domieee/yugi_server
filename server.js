@@ -22,7 +22,6 @@ app.use(cors(corsOptions))
 
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
-app.use(cookieParser())
 app.use(express.json())
 
 
