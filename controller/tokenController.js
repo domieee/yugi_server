@@ -1,8 +1,17 @@
 import jwt from 'jsonwebtoken'
 
 export const createToken = (user) => {
-    console.log(user, 'tokennnnnnnnnnnnnnnnnnnnnn')
-    const token = jwt.sign({ user: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' })
-    console.log(token)
+    const token = jwt.sign({ username: user.username, id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' })
     return token
+}
+
+export const receiveUserInformations = (req, res, next) => {
+    const token = req.body.token
+    try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decodedToken, 'decoded')
+        res.json(decodedToken)
+    } catch (err) {
+        console.log(err)
+    }
 }

@@ -20,15 +20,20 @@ import {
     completeRegistration
 } from './controller/registrationController.js'
 
+import {
+    receiveUserInformations
+} from './controller/tokenController.js'
+
 const app = express()
 
 
 
 app.use(express.json())
+app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use(cors({ origin: '*' }))
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
-app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
+
 
 app.get('/', async (req, res) => {
     const db = await connectDatabase()
@@ -38,6 +43,8 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/register', validateRegisterInput, encrypt, completeRegistration)
+
+app.post('/reveal-user-informations', receiveUserInformations)
 
 app.post('/tournament-overview', async (req, res) => {
     console.log(req.body.id)
