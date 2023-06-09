@@ -23,8 +23,11 @@ export async function validateRegisterInput(req, res, next) {
         const value = await schema.validateAsync({ username: req.body.username, email: req.body.mail, password: req.body.password, repeat_password: req.body.confirmPassword })
         res.end()
     } catch (err) {
-        console.log(err)
+        res.status(400).json(err)
         if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'email') {
+            res.status(400).json({ msg: 'Email is required', key: 'email' })
+            return
+        } else if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'email') {
             res.status(400).json({ msg: 'Email is required', key: 'email' })
             return
         } else if (err.details[0].type === 'string.email' && err.details[0].context.key === 'email') {
