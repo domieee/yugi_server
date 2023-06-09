@@ -18,7 +18,7 @@ const PORT = process.env.PORT || process.env.FALLBACK_PORT
 app.use(cors({ origin: '*' }))
 app.use(express.json())
 
-app.get('/', async (req, res) => {
+app.post('/', async (req, res) => {
 
     const db = await connectDatabase()
     const json = await db.collection('tournaments').find({}).toArray()
