@@ -12,12 +12,13 @@ import {
 } from './middlewares/joiAuthMiddleware.js'
 
 const app = express()
+app.use(express.json())
 
 app.use(cors({ origin: true }))
 
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
-app.use(express.json())
+
 
 app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 
