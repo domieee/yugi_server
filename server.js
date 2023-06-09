@@ -14,7 +14,7 @@ import {
 const app = express()
 
 const corsOptions = {
-    origin: 'https://yugi-server.vercel.app/',
+    origin: '*',
     credentials: true
 };
 
