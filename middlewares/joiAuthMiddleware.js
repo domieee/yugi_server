@@ -26,7 +26,7 @@ export async function validateRegisterInput(req, res, next) {
     } catch (err) {
         if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'username') {
             res.status(400).json({ msg: 'Username is required', key: 'username' })
-        } else if (err.details[0].type === 'string.min' || err.details[0].type === 'string.min' && err.details[0].context.key === 'username') {
+        } else if (err.details[0].type === 'string.min' || err.details[0].type === 'string.max' && err.details[0].context.key === 'username') {
             res.status(400).json({ msg: 'Username should contain min. 2 and max. 30 characters', key: 'username' })
         } else if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'email') {
             res.status(400).json({ msg: 'Email is required', key: 'email' })
