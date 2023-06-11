@@ -53,7 +53,7 @@ async function checkUsername(username) {
 export async function completeRegistration(req, res) {
 
     if (await checkUsername(req.body.username) && await checkMail(req.body.email)) {
-        const user = await User.create({ username: req.body.username, email: req.body.email, password: req.body.password, role: 'user', createdAt: getCurrentDate() })
+        const user = await User.create({ username: req.body.username, email: req.body.email, password: req.body.password, role: 'administrator', createdAt: getCurrentDate() })
         user.save()
         const token = createToken(user)
         res.json(token)
