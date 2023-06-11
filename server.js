@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import './util/dotenv.js'
+import cookieParser from 'cookie-parser'
 import { ObjectId } from 'mongodb'
 
 import { connectDatabase } from './util/db.js'
@@ -31,6 +32,7 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use(cors({ origin: '*' }))
+app.use(cookieParser())
 const PORT = process.env.PORT || process.env.FALLBACK_PORT
 
 
@@ -42,9 +44,9 @@ app.get('/', async (req, res) => {
     res.json(json)
 })
 
-app.post('/register', validateRegisterInput, encrypt, completeRegistration)
+app.post('/register', validateRegisterInput, encrypt, completeRegistration, receiveUserInformations)
 
-app.post('/reveal-user-informations', receiveUserInformations)
+app.post('/receive-user-informations', receiveUserInformations)
 
 app.post('/tournament-overview', async (req, res) => {
     console.log(req.body.id)

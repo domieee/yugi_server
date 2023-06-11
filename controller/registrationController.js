@@ -56,7 +56,7 @@ export async function completeRegistration(req, res) {
         const user = await User.create({ username: req.body.username, email: req.body.email, password: req.body.password, role: 'user', createdAt: getCurrentDate() })
         user.save()
         const token = createToken(user)
-        res.status(200).json(token)
+        res.json(token)
     } else {
         res.status(400).json(response)
     }

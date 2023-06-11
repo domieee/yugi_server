@@ -6,11 +6,13 @@ export const createToken = (user) => {
 }
 
 export const receiveUserInformations = (req, res, next) => {
+    console.log(req.body.token)
     const token = req.body.token
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         console.log(decodedToken, 'decoded')
         res.json(decodedToken)
+        console.log(decodedToken)
     } catch (err) {
         console.log(err)
     }
