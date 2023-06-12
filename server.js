@@ -14,11 +14,13 @@ import {
 } from './middlewares/claimAuthMiddleware.js'
 
 import {
-    validateRegisterInput
+    validateRegisterInput,
+    validateLoginInput
 } from './middlewares/joiAuthMiddleware.js'
 
 import {
-    completeRegistration
+    completeRegistration,
+    completeLogin
 } from './controller/registrationController.js'
 
 import {
@@ -44,7 +46,20 @@ app.get('/', async (req, res) => {
     res.json(json)
 })
 
-app.post('/register', validateRegisterInput, encrypt, completeRegistration, receiveUserInformations)
+app.post(
+    '/register',
+    validateRegisterInput,
+    encrypt,
+    completeRegistration,
+    receiveUserInformations
+)
+
+app.post(
+    '/login',
+    validateLoginInput,
+    encrypt,
+    completeLogin
+)
 
 app.post('/receive-user-informations', receiveUserInformations)
 

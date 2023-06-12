@@ -61,3 +61,38 @@ export async function completeRegistration(req, res) {
         res.status(400).json(response)
     }
 }
+
+async function checkMailOrName(mailOrName) {
+    const checkMailOrNameExists = await User.findOne({ username: mailOrName }) || await User.findOne({ email: mailOrName });
+    if (checkMailOrNameExists === null) {
+        response = { msg: 'The login infomations u provided seems to be incorrect.', key: 'mailOrPassword' };
+        return false
+    } else {
+        return true
+    }
+}
+
+async function checkPassword(mailOrName, password) {
+    const user = await User.findOne({ username: mailOrName }) || await User.findOne({ email: mailOrName })
+    if (user.password === password) {
+        return true
+    } else {
+        response = { msg: 'The login infomations u provided seems to be incorrect.', key: 'mailOrPassword' };
+        return false
+    }
+}
+
+export async function completeLogin(req, res) {
+    if (await checkMailOrName(req.body.mailOrName)) {
+        if (await checkPassword(req.body.mailOrName, req.body.password)) {
+            const user = await User.findOne({ username: req.body.mailOrName }) || await User.findOne({ email: req.body.mailOrName });
+            user.save()
+            const token = createToken(user)
+            res.json(token)
+        } else {
+            res.status(400).json(response)
+        }
+    } else {
+        res.status(400).json(response)
+    }
+}

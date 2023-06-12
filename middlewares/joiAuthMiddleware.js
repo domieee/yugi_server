@@ -4,8 +4,6 @@ import mongoose from 'mongoose'
 
 export async function validateRegisterInput(req, res, next) {
 
-
-
     const schema = Joi.object({
         username: Joi.string()
             .required()
@@ -15,7 +13,6 @@ export async function validateRegisterInput(req, res, next) {
 
         email: Joi.string()
             .email({ minDomainSegments: 2 }),
-
 
         // TODO: CHANGE THE REGEXP
         password: Joi.string()
@@ -49,6 +46,28 @@ export async function validateRegisterInput(req, res, next) {
         } else {
             res.status(400).json({ msg: 'Something went wrong while logging in. Please try it again.', key: 'password' })
             return
+        }
+    }
+}
+
+export async function validateLoginInput(req, res, next) {
+    console.log('first')
+    const schema = Joi.object({
+        mailOrName: Joi.string(),
+        password: Joi.string()
+    })
+
+    try {
+        const value = await schema.validateAsync({ mailOrName: req.body.mailOrName, password: req.body.password })
+        next()
+    } catch (err) {
+        console.log(err, err.details[0].context)
+        if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'mailOrName') {
+            res.status(400).json({ msg: 'This field is required. Either login with your username or email.', key: 'email' })
+        } else if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'password') {
+            res.status(400).json({ msg: 'This field is required. Please enter a password.', key: 'password' })
+        } else {
+            res.status(400).json({ msg: 'Something went wrong while logging in. Please try it again.', key: 'password' })
         }
     }
 }
