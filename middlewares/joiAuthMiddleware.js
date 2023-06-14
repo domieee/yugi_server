@@ -14,13 +14,14 @@ export async function validateRegisterInput(req, res, next) {
         email: Joi.string()
             .email({ minDomainSegments: 2 }),
 
-        // TODO: CHANGE THE REGEXP
         password: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-
-        repeat_password: Joi.ref('password')
+            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
             .required(),
-    })
+
+        repeat_password: Joi.string()
+            .valid(Joi.ref('password'))
+            .required(),
+    });
 
     try {
         const value = await schema.validateAsync({ username: req.body.username, email: req.body.email, password: req.body.password, repeat_password: req.body.confirmPassword })
@@ -28,10 +29,10 @@ export async function validateRegisterInput(req, res, next) {
     } catch (err) {
         console.log(err.details)
         if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'username') {
-            res.status(400).json({ msg: 'Username is required', key: 'username' })
+            res.status(400).json({ msg: 'Username is required', key: 'username' }) // If the username field is empty
             return
         } else if (err.details[0].type === 'string.min' || err.details[0].type === 'string.max' && err.details[0].context.key === 'username') {
-            res.status(400).json({ msg: 'Username should contain min. 2 and max. 30 characters', key: 'username' })
+            res.status(400).json({ msg: 'Username should contain min. 2 and max. 30 characters', key: 'username' }) // If the username doesn't contain between 2 and 30 characters
             return
         } else if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'email') {
             res.status(400).json({ msg: 'Email is required', key: 'email' })
