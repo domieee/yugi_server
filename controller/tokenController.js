@@ -14,6 +14,6 @@ export const receiveUserInformations = (req, res, next) => {
         res.json(decodedToken)
         console.log(decodedToken)
     } catch (err) {
-        console.log(err)
+        res.json({ msg: 'Your Session is expired. Please login again.' })
     }
 }
