@@ -27,6 +27,10 @@ import {
     receiveUserInformations
 } from './controller/tokenController.js'
 
+import {
+    postNewTournament
+} from './controller/tournamentController.js'
+
 const app = express()
 
 
@@ -62,6 +66,9 @@ app.post(
 )
 
 app.post('/receive-user-informations', receiveUserInformations)
+
+// TODO: Create a middleware that validates the user status (administrator, moderator)
+app.post('/post-new-tournament', postNewTournament)
 
 app.post('/tournament-overview', async (req, res) => {
     console.log(req.body.id)
