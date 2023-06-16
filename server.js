@@ -24,7 +24,8 @@ import {
 } from './controller/registrationController.js'
 
 import {
-    receiveUserInformations
+    receiveUserInformations,
+    validateModeratorAction
 } from './controller/tokenController.js'
 
 import {
@@ -68,7 +69,7 @@ app.post(
 app.post('/receive-user-informations', receiveUserInformations)
 
 // TODO: Create a middleware that validates the user status (administrator, moderator)
-app.post('/post-new-tournament', postNewTournament)
+app.post('/post-new-tournament', validateModeratorAction, postNewTournament)
 
 app.post('/tournament-overview', async (req, res) => {
     console.log(req.body.id)

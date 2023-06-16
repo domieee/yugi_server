@@ -17,3 +17,15 @@ export const receiveUserInformations = (req, res, next) => {
         res.json({ msg: 'Your Session is expired. Please login again.' })
     }
 }
+
+export const validateModeratorAction = async (req, res, next) => {
+
+    console.log('UserID', req.body.userId)
+    const decodedToken = await jwt.verify(req.body.userId, process.env.JWT_SECRET);
+    console.log('decodedToken', decodedToken)
+    if (decodedToken.role === 'moderator' || decodedToken.role === 'administrator') {
+        next()
+    } else {
+        res.status(401).json({ msg: 'You are not allowed to perform this action.' })
+    }
+}
