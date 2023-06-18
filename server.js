@@ -29,7 +29,8 @@ import {
 } from './controller/tokenController.js'
 
 import {
-    postNewTournament
+    postNewTournament,
+    fetchTournamentTreeData
 } from './controller/tournamentController.js'
 
 const app = express()
@@ -85,6 +86,8 @@ app.post('/tournament-overview', async (req, res) => {
         res.status(500).json({ error: 'An error occurred' });
     }
 });
+
+app.post('/fetch-tournament-tree', fetchTournamentTreeData)
 
 app.get('/winner-breakdown', async (req, res) => {
 
