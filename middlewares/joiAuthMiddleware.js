@@ -69,9 +69,9 @@ export async function validateLoginInput(req, res, next) {
     } catch (err) {
         console.log(err, err.details[0].context)
         if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'mailOrName') {
-            res.status(400).json({ msg: 'This field is required. Either login with your username or email.', key: 'email' })
+            res.status(400).json({ msg: 'Almost there! We just need a username or e-mail address to proceed.', key: 'email' })
         } else if (err.details[0].type === 'string.empty' && err.details[0].context.key === 'password') {
-            res.status(400).json({ msg: 'This field is required. Please enter a password.', key: 'password' })
+            res.status(400).json({ msg: 'Almost there! We just need a password to proceed.', key: 'password' })
         } else {
             res.status(400).json({ msg: 'Something went wrong while logging in. Please try it again.', key: 'password' })
         }
