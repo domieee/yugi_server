@@ -1,5 +1,4 @@
-import Tournament from "../models/tournamentModel.mjs";
-
+import { Tournament } from '../models/tournamentModel.mjs';
 
 import { ObjectId } from 'mongodb'
 export const postNewTournament = async (req, res, nex) => {
@@ -15,56 +14,46 @@ export const postNewTournament = async (req, res, nex) => {
     }
 }
 
-function separatePlayersByPlace(players) {
-    const separatedPlayers = [
-        [],
-        [],
-        [],
-        [],
-        []
-    ];
-
-    players.forEach((player) => {
-        switch (player.place) {
-            case 'first':
-                separatedPlayers[0].push(player);
-                break;
-            case 'second':
-                separatedPlayers[1].push(player);
-                break;
-            case 'top4':
-                separatedPlayers[2].push(player);
-                break;
-            case 'top8':
-                separatedPlayers[3].push(player);
-                break;
-            case 'top16':
-                separatedPlayers[4].push(player);
-                break;
-            default:
-                break;
-        }
-    });
-
-    return separatedPlayers;
-}
-
 export async function fetchTournamentTreeData(req, res, next) {
     try {
 
         const tournament = await Tournament.findById(req.body.tournamentId).lean();
 
+
         if (!tournament) {
-            console.log('No tournament data found.');
-            return;
+            res.status(404).send({ msg: 'No tournament data found' })
         }
 
-        const playersByPlace = separatePlayersByPlace(tournament.player);
-        console.log(playersByPlace);
-        res.json(playersByPlace)
+        const players = tournament.players
+        console.log("🚀 ~ file: tournamentController.js:28 ~ fetchTournamentTreeData ~ players:", players)
+
+        res.status(200).json(players)
 
     } catch (error) {
-        console.error('Error fetching players:', error);
-        res.end()
+        console.error('', error);
+        res.status(400).send({ msg: 'Error fetching Tournament Tree' })
+    }
+}
+
+export const createNewTournament = async (req, res, next) => {
+    try {
+        const tournament = new Tournament({
+            createdBy: req.createdBy,
+            editedBy: {},
+            tournamentType: req.body.tournamentType,
+            location: req.body.location,
+            totalParticipants: req.body.totalParticipants,
+            date: req.body.date,
+            players: req.body.players
+        });
+        try {
+            const createdTournament = await tournament.save();
+        } catch (error) {
+            console.log(err)
+        }
+        console.log("🚀 ~ createNewTournament ~ tournament:", tournament);
+
+    } catch (err) {
+        console.log(err)
     }
 }

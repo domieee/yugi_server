@@ -25,12 +25,14 @@ import {
 
 import {
     receiveUserInformations,
-    validateModeratorAction
+    validateModeratorAction,
+    validateTournamentCreationPermission
 } from './controller/tokenController.js'
 
 import {
     postNewTournament,
-    fetchTournamentTreeData
+    fetchTournamentTreeData,
+    createNewTournament
 } from './controller/tournamentController.js'
 
 const app = express()
@@ -86,6 +88,8 @@ app.post('/tournament-overview', async (req, res) => {
         res.status(500).json({ error: 'An error occurred' });
     }
 });
+
+app.post('/fetch-new-tournament', validateTournamentCreationPermission, createNewTournament)
 
 app.post('/fetch-tournament-tree', fetchTournamentTreeData)
 

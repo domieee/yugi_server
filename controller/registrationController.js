@@ -40,6 +40,7 @@ async function checkUsername(username) {
             console.log('REGISTER: username not registered');
             return true;
         } else {
+            console.log("🚀 ~ file: registrationController.js:44 ~ checkUsername ~ username:", username)
             console.log('REGISTER: username registered');
             response = { msg: 'Username already registered', key: 'email' };
             return false
