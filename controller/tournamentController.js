@@ -48,11 +48,12 @@ export const createNewTournament = async (req, res, next) => {
         });
         try {
             const createdTournament = await tournament.save();
-        } catch (error) {
-            console.log(err)
-        }
-        console.log("🚀 ~ createNewTournament ~ tournament:", tournament);
 
+            res.json({ tournamentId: createdTournament.id })
+        } catch (err) {
+            console.log(err)
+            res.end()
+        }
     } catch (err) {
         console.log(err)
     }
