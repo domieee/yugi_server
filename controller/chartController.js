@@ -5,15 +5,14 @@ import { ObjectId } from 'mongodb'
 export const getTournamentBreakdown = async (req, res, next) => {
     const tournamentId = new ObjectId(req.body.id[0])
 
-    const data = []
-    const values = []
-    const counts = []
-    const percentages = []
+    const data = [];
+    const values = [];
+    const counts = [];
+    const percentages = [];
 
     try {
-
-        const db = await connectDatabase()
-        const tournaments = db.collection('tournaments')
+        const db = await connectDatabase();
+        const tournaments = db.collection('tournaments');
 
         const pipeline = [
             {
@@ -22,42 +21,44 @@ export const getTournamentBreakdown = async (req, res, next) => {
                 }
             },
             {
-                $unwind: "$player"
+                $unwind: "$players"
+            },
+            {
+                $unwind: "$players"
             },
             {
                 $group: {
-                    _id: "$player.deck",
+                    _id: "$players.deck",
                     count: { $sum: 1 }
                 }
             }
-        ]
+        ];
 
-        const cursor = tournaments.aggregate(pipeline)
-        let percentageValue = 0
+        const cursor = tournaments.aggregate(pipeline);
+        console.log("🚀 ~ file: chartController.js:38 ~ getTournamentBreakdown ~ cursor:", cursor)
+        let percentageValue = 0;
 
         await cursor.forEach(result => {
-            values.push(result._id)
-            counts.push(result.count)
-        })
+            values.push(result._id);
+            counts.push(result.count);
+        });
 
         counts.forEach(count => {
-            percentageValue += count
-        })
+            percentageValue += count;
+        });
 
         counts.forEach(count => {
             let percentage = (count * 100) / percentageValue;
-            percentage = percentage.toFixed(2)
-            percentages.push(percentage)
-        })
+            percentage = percentage.toFixed(2);
+            percentages.push(percentage);
+        });
 
-        data.push(values)
-        data.push(counts)
-        data.push(percentages)
+        data.push(values);
+        data.push(counts);
+        data.push(percentages);
 
-        res.status(200).json(data)
+        res.status(200).json(data);
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-
-
-}
+};
