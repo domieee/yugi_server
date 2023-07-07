@@ -13,7 +13,8 @@ export const receiveUserInformations = (req, res, next) => {
     console.log(req.body.token)
     const token = req.body.token
     try {
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+        console.log(decodedToken)
         res.json(decodedToken)
     } catch (err) {
         if (err.name === 'TokenExpiredError') {

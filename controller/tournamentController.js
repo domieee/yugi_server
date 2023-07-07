@@ -37,13 +37,31 @@ export async function fetchTournamentTreeData(req, res, next) {
 
 export const createNewTournament = async (req, res, next) => {
     try {
+
+        const givenTime = new Date(req.body.date);
+        givenTime.setHours(givenTime.getHours() + 1);
+
+        const day = givenTime.getUTCDate()
+        const month = givenTime.getUTCMonth() + 1
+        const year = givenTime.getUTCFullYear()
+        const formattedDate = `${givenTime.getUTCDate()}/${givenTime.getUTCMonth() + 1}/${givenTime.getUTCFullYear()}`;
+
+
+        const datetimes = {
+            ISODate: formattedDate,
+            UIDate: formattedDate,
+            day: day,
+            month: month,
+            year: year
+        }
+        console.log(req.body.date)
         const tournament = new Tournament({
             createdBy: req.createdBy,
             editedBy: {},
             tournamentType: req.body.tournamentType,
             location: req.body.location,
             totalParticipants: req.body.totalParticipants,
-            date: req.body.date,
+            datetimes: datetimes,
             players: req.body.players
         });
         try {

@@ -82,6 +82,7 @@ app.post('/tournament-overview', async (req, res) => {
         const db = await connectDatabase();
         const json = await db.collection('tournaments').findOne({ _id: reqID });
         console.log(json)
+        console.log("🚀 ~ file: server.js:85 ~ app.post ~ json:", json)
         res.json(json);
     } catch (error) {
         console.log(error)

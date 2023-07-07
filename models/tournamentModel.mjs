@@ -51,9 +51,27 @@ const tournamentSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    date: {
-        type: Date,
-        default: null
+    datetimes: {
+        ISODate: {
+            type: Date,
+            default: null
+        },
+        UIDate: {
+            type: String,
+            default: null
+        },
+        day: {
+            type: Number,
+            default: null
+        },
+        month: {
+            type: Number,
+            default: null
+        },
+        year: {
+            type: Number,
+            default: null
+        },
     },
     players: {
         type: [[playerSchema]],
