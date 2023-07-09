@@ -95,114 +95,188 @@ app.post('/fetch-new-tournament', validateTournamentCreationPermission, createNe
 app.post('/fetch-tournament-tree', fetchTournamentTreeData)
 
 app.get('/winner-breakdown', async (req, res) => {
-
-    const data = []
-    const values = []
-    const counts = []
-    const percentages = []
-
     try {
-        const db = await connectDatabase()
-        const tournaments = db.collection('tournaments')
+        const db = await connectDatabase();
+        const tournaments = db.collection('tournaments');
+
+
 
         const pipeline = [
             {
-                $unwind: "$player"
+                $project: {
+                    players: { $arrayElemAt: ['$players', 0] }
+                }
             },
             {
-                $match: {
-                    "player.place": "first"
-                }
+                $unwind: "$players"
             },
             {
                 $group: {
-                    _id: "$player.deck",
+                    _id: "$players.deck",
                     count: { $sum: 1 }
                 }
+            },
+            {
+                $sort: {
+                    count: -1
+                }
             }
-        ]
+        ];
 
-        const cursor = tournaments.aggregate(pipeline)
-        let percentageValue = 0
+        const cursor = tournaments.aggregate(pipeline);
+        const values = [];
+        const counts = [];
+        let totalCount = 0;
 
         await cursor.forEach(result => {
-            values.push(result._id)
-            counts.push(result.count)
-        })
+            console.log("🚀 ~ file: server.js:123 ~ app.get ~ result:", result)
+            values.push(result._id);
+            counts.push(result.count);
+            totalCount += result.count;
+        });
 
-        counts.forEach(count => {
-            percentageValue += count
-        })
+        const percentages = counts.map(count => ((count * 100) / totalCount).toFixed(2));
 
-        counts.forEach(count => {
-            let percentage = (count * 100) / percentageValue
-            percentage = percentage.toFixed(2)
-            percentages.push(percentage)
-        })
+        const data = [values, counts, percentages];
 
-        data.push(values)
-        data.push(counts)
-        data.push(percentages)
-
-        res.status(200).json(data)
+        res.status(200).json(data);
     } catch (error) {
-        console.error("Error retrieving winner breakdown:", error)
-        res.status(500).json({ error: "An error occurred while retrieving the winner breakdown" })
+        console.error("Error retrieving counts for players[0].deck:", error);
+        res.status(500).json({ error: "An error occurred while retrieving the counts for players[0].deck" });
     }
 })
 
 app.get('/overall-breakdown', async (req, res) => {
 
-    const data = []
-    const values = []
-    const counts = []
-    const percentages = []
-
     try {
-
-        const db = await connectDatabase()
-        const tournaments = db.collection('tournaments')
+        const db = await connectDatabase();
+        const tournaments = db.collection('tournaments');
 
         const pipeline = [
+
             {
-                $unwind: "$player"
+                $unwind: "$players"
+            },
+            {
+                $unwind: "$players"
             },
             {
                 $group: {
-                    _id: "$player.deck",
+                    _id: "$players.deck",
                     count: { $sum: 1 }
                 }
+            },
+            {
+                $sort: {
+                    count: -1
+                }
             }
-        ]
+        ];
 
-        const cursor = tournaments.aggregate(pipeline)
-        let percentageValue = 0
+        const cursor = tournaments.aggregate(pipeline);
+        const values = [];
+        const counts = [];
+        const percentages = [];
+        let totalCount = 0;
 
         await cursor.forEach(result => {
-            values.push(result._id)
-            counts.push(result.count)
-        })
+            console.log("🚀 ~ file: server.js:179 ~ app.get ~ result:", result)
+            values.push(result._id);
+            counts.push(result.count);
+            totalCount += result.count;
+        });
 
         counts.forEach(count => {
-            percentageValue += count
-        })
+            const percentage = ((count * 100) / totalCount).toFixed(2);
+            percentages.push(percentage);
+        });
 
-        counts.forEach(count => {
-            let percentage = (count * 100) / percentageValue
-            percentage = percentage.toFixed(2)
-            percentages.push(percentage)
-        })
+        const data = [values, counts, percentages];
 
-        data.push(values)
-        data.push(counts)
-        data.push(percentages)
-
-        res.status(200).json(data)
+        res.status(200).json(data);
     } catch (error) {
-        console.error("Error retrieving deck count:", error)
-        res.status(500).json({ error: "An error occurred while retrieving the deck count" })
+        console.error("Error retrieving player deck counts:", error);
+        res.status(500).json({ error: "An error occurred while retrieving the player deck counts" });
     }
 })
+
+app.get('/most-played-deck', async (req, res) => {
+    try {
+        const db = await connectDatabase();
+        const tournaments = db.collection('tournaments');
+
+        const currentYear = new Date().getFullYear();
+
+        const tournamentPipeline = [
+            {
+                $match: {
+                    "datetimes.year": currentYear // Include documents from the current year
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    documentCount: { $sum: 1 }
+                }
+            }
+        ];
+
+        const tournamentCount = tournaments.aggregate(tournamentPipeline);
+
+        let tournamentCounts = await tournamentCount.next();
+        console.log("🚀 ~ file: server.js:233 ~ app.get ~ tournamentCounts:", tournamentCounts)
+
+        const pipeline = [
+            {
+                $unwind: "$players"
+            },
+            {
+                $unwind: "$players"
+            },
+            {
+                $match: {
+                    "players.deck": { $ne: "" }, // Exclude empty decks
+                    "datetimes.year": currentYear // Filter for the current year
+                }
+            },
+            {
+                $group: {
+                    _id: "$players.deck",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: {
+                    count: -1
+                }
+            },
+            {
+                $limit: 1
+            }
+        ];
+
+
+        const cursor = tournaments.aggregate(pipeline);
+
+        let result = await cursor.next();
+        console.log("🚀 ~ file: server.js:262 ~ app.get ~ result:", result)
+
+        const totalDocumentCount = tournamentCounts.documentCount;
+
+        // Rest of the code...
+
+        const percentage = ((result.count * 100) / totalDocumentCount).toFixed(2);
+
+        console.log(percentage);
+
+        const mostPlayedDeck = { name: result._id, count: result.count, percentage: parseFloat(percentage) }
+
+        res.status(200).json(mostPlayedDeck);
+    } catch (error) {
+        console.error("Error retrieving the most played deck:", error);
+        res.status(500).json({ error: "An error occurred while retrieving the most played deck" });
+    }
+});
 
 app.post('/tournament-breakdown', getTournamentBreakdown)
 

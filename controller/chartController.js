@@ -53,9 +53,18 @@ export const getTournamentBreakdown = async (req, res, next) => {
             percentages.push(percentage);
         });
 
-        data.push(values);
-        data.push(counts);
-        data.push(percentages);
+        let indexArray = Array.from(Array(values.length).keys());
+
+        // Sortiere das Index-Array basierend auf den Prozentwerten
+        indexArray.sort((a, b) => percentages[b] - percentages[a]);
+
+        let sortedValues = indexArray.map(i => values[i]);
+        let sortedCounts = indexArray.map(i => counts[i]);
+        let sortedPercentages = indexArray.map(i => percentages[i]);
+
+        data.push(sortedValues);
+        data.push(sortedCounts);
+        data.push(sortedPercentages);
 
         res.status(200).json(data);
     } catch (error) {
