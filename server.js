@@ -180,7 +180,6 @@ app.get('/overall-breakdown', async (req, res) => {
         let totalCount = 0;
 
         await cursor.forEach(result => {
-            console.log("🚀 ~ file: server.js:179 ~ app.get ~ result:", result)
             values.push(result._id);
             counts.push(result.count);
             totalCount += result.count;
@@ -200,31 +199,11 @@ app.get('/overall-breakdown', async (req, res) => {
     }
 })
 
-app.get('/most-played-deck', async (req, res) => {
+
+app.get('/find-lowest-results', async (req, res) => {
     try {
         const db = await connectDatabase();
         const tournaments = db.collection('tournaments');
-
-        const currentYear = new Date().getFullYear();
-
-        const tournamentPipeline = [
-            {
-                $match: {
-                    "datetimes.year": currentYear // Include documents from the current year
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    documentCount: { $sum: 1 }
-                }
-            }
-        ];
-
-        const tournamentCount = tournaments.aggregate(tournamentPipeline);
-
-        let tournamentCounts = await tournamentCount.next();
-        console.log("🚀 ~ file: server.js:233 ~ app.get ~ tournamentCounts:", tournamentCounts)
 
         const pipeline = [
             {
@@ -232,12 +211,6 @@ app.get('/most-played-deck', async (req, res) => {
             },
             {
                 $unwind: "$players"
-            },
-            {
-                $match: {
-                    "players.deck": { $ne: "" }, // Exclude empty decks
-                    "datetimes.year": currentYear // Filter for the current year
-                }
             },
             {
                 $group: {
@@ -249,34 +222,62 @@ app.get('/most-played-deck', async (req, res) => {
                 $sort: {
                     count: -1
                 }
-            },
-            {
-                $limit: 1
             }
         ];
 
-
         const cursor = tournaments.aggregate(pipeline);
+        const values = [];
+        const counts = [];
+        const percentages = [];
+        let totalCount = 0;
 
-        let result = await cursor.next();
-        console.log("🚀 ~ file: server.js:262 ~ app.get ~ result:", result)
+        await cursor.forEach(result => {
+            values.push(result._id);
+            counts.push(result.count);
+            totalCount += result.count;
+        });
 
-        const totalDocumentCount = tournamentCounts.documentCount;
+        counts.forEach(count => {
+            const percentage = ((count * 100) / totalCount).toFixed(2);
+            percentages.push(percentage);
+        });
+        function findIndicesOfLowestResult(arr) {
+            const parsedPercentages = arr.map(Number); // Convert string percentages to numbers
+            const lowestResult = Math.min(...parsedPercentages);
+            const indices = parsedPercentages.reduce((acc, currentResult, currentIndex) => {
+                if (currentResult === lowestResult) {
+                    acc.push(currentIndex);
+                }
+                return acc;
+            }, []);
+            return indices;
+        }
+        const indicesOfLowestResult = await findIndicesOfLowestResult(percentages)
 
-        // Rest of the code...
+        const lowestResultArray = []
 
-        const percentage = ((result.count * 100) / totalDocumentCount).toFixed(2);
+        indicesOfLowestResult.map(index => {
+            if (values[index].length > 0) {
+                lowestResultArray.push(values[index + 1])
+            }
+        })
 
-        console.log(percentage);
+        console.log(values, counts, percentages)
 
-        const mostPlayedDeck = { name: result._id, count: result.count, percentage: parseFloat(percentage) }
+        const data = {
+            value: values[indicesOfLowestResult[0]],
+            count: counts[indicesOfLowestResult[0]],
+            percentage: percentages[indicesOfLowestResult[0]],
+            indicesOfLowestResult: lowestResultArray
+        };
 
-        res.status(200).json(mostPlayedDeck);
+        res.status(200).json(data);
+
     } catch (error) {
-        console.error("Error retrieving the most played deck:", error);
-        res.status(500).json({ error: "An error occurred while retrieving the most played deck" });
+        console.error("Error retrieving the deck statistics:", error);
+        res.status(500).json({ error: "An error occurred while retrieving the deck statistics" });
     }
-});
+})
 
 app.post('/tournament-breakdown', getTournamentBreakdown)
 
